@@ -106,7 +106,7 @@ Example:
 The error path `#/a/[1]/b(0)` refers here to the key `a` in the root dict, the 1-st item
 of the list (starts from 0) and the 0-th argument of the term.
 
-## Primitive values
+## Available types
 
 ### string
 
@@ -156,8 +156,6 @@ The list must contain atoms. If the checked value is not in the list
 then an error is produced. If the input value is a string then it is converted
 into an atom first. All other values produce an error.
 
-## Composite values
-
 ### dict
 
 The dict type has the following attributes:
@@ -185,11 +183,11 @@ The compound type has the following attributes:
  * name - the compound name.
  * arguments - the compound arguments.
 
-## Unions
+### unions
 
 Union of types can be expressed with using a list. The first schema and
 the conversion result that matches is used. When no schema matches then
-an error `no_union_match(Path, Value)` is produced.
+an error `union_mismatch(Path, Reasons)` is produced.
 
 Examples:
 
@@ -204,7 +202,7 @@ Examples:
         [not_number(#, a(1))]
     ])].
 
-## Any
+### any
 
 Type `any` marks the value non-checked and non-converted.
 
@@ -242,3 +240,14 @@ Tree with positive numbers:
             [invalid_compound(# / branch(1),a)]
         ])]
     ])].
+
+## Metavalidation
+
+The schema is validated on-the-fly during the validation of the input term.
+It is checked for valid attributes. Schema errors are thrown as exceptions
+and are not placed into the `Errors` output list.
+
+## API documentation
+
+Generated API documentation can be found from here:
+<http://packs.rlaanemets.com/dict-schema/doc>.
