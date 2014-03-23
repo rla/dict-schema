@@ -4,6 +4,12 @@
     unregister_schema/1 % +Name
 ]).
 
+/** <module> Dict validation and conversion
+
+Converts string to atoms and vice versa. Validates
+your dicts. See project README for examples.
+*/
+
 :- use_module(library(error)).
 
 :- dynamic(schema/2).
