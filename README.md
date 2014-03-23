@@ -1,8 +1,76 @@
 # dict-schema
 
 Dict validation/conversion for Swi-Prolog. The library started as a predicate
-to convert certain dict (from HTTP JSON requests) values into suitable forms.
-Large part of this library was inspired by JSON-Schema.
+to convert certain dict (from HTTP JSON requests) entries into suitable forms
+(especially the string/atom conversion). A large part of this library was inspired
+by JSON-Schema.
+
+## Example
+
+Check vehicle against a schema:
+
+    ?- Schema = _{
+        type: dict,
+        keys: _{
+            year: _{
+                type: integer,
+                min: 1672
+            },
+            make: _{
+                type: atom,
+                min_length: 1
+            },
+            model: _{
+                type: atom,
+                min_length: 1
+            }
+        }
+    },
+    Vehicle = vehicle{
+        year: 1953,
+        make: chevrolet,
+        model: corvette
+    },
+    convert(Vehicle, Schema, Out, Errors),
+    Out = vehicle{make:chevrolet, model:corvette, year:1953},
+    Errors = [].
+
+You can name the schema by registering it:
+
+    ?- register_schema(vehicle, _{
+        type: dict,
+        keys: _{
+            year: _{
+                type: integer,
+                min: 1672
+            },
+            make: _{
+                type: atom,
+                min_length: 1
+            },
+            model: _{
+                type: atom,
+                min_length: 1
+            }
+        }
+    }).
+
+And then use it by name:
+
+    Vehicle = vehicle{
+        year: 1200,
+        make: chevrolet,
+        model: corvette
+    },
+    convert(Vehicle, vehicle, Out, Errors).
+    Out = vehicle{make:chevrolet, model:corvette, year:1200},
+    Errors = [min(# / year, 1200, 1672)].
+
+The last example also shows validation error for the `year` key. Another
+feature is automatic conversion from strings to atoms when the atom type
+is requested:
+
+    ?- convert("abc", atom, Out, Errors), atom(Out).
 
 ## Path indicators
 
@@ -53,7 +121,6 @@ an error `not_string(Path, Value)`.
 
 When the `min_length` property is violated then an
 error `min_length(Path, Value, MinLength)` is produced.
-
 When the `max_length` property is violated then an
 error `max_length(Path, Value, MaxLength)` is produced.
 
@@ -75,7 +142,6 @@ All other values than numbers will produce an error.
 
 When the `min` property is violated then an error term
 `min(Path, Value, Min)` is produced.
-
 When the `max` property is violated then an error term
 `max(Path, Value, Max)` is produced.
 
@@ -147,7 +213,7 @@ Type `any` marks the value non-checked and non-converted.
 Named schema can be added with `register_schema(Name, Schema)` and removed with
 `unregister_schema(Name)`. Schema names must be atoms.
 
-## Complex examples
+## Validating trees
 
 Tree with positive numbers:
 
