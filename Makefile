@@ -6,7 +6,7 @@ test:
 	swipl -s tests/tests -g run_tests -t halt
 
 package: test
-	tar cvzf $(packfile) prolog tests pack.pl README.md
+	tar cvzf $(packfile) prolog tests pack.pl README.md LICENSE
 
 doc:
 	swipl -q -t 'doc_save(prolog, [doc_root(doc),format(html),title(dict_schema),if(true),recursive(false)])'
