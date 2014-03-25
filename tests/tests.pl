@@ -228,4 +228,16 @@ test(valid_var):-
 test(invalid_var):-
     convert(1, var, 1, [not_variable('#', 1)]).
 
+test(valid_bool_true):-
+    convert(true, bool, true, []).
+
+test(valid_bool_false):-
+    convert(false, bool, false, []).
+
+test(invalid_bool):-
+    convert(1, bool, 1, [not_bool('#', 1)]).
+
+test(invalid_bool_var):-
+    convert(_, bool, _, [not_ground('#', _)]).
+
 :- end_tests(dict_schema).

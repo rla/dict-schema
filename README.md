@@ -135,6 +135,11 @@ When the `max` property is violated then an error term
 
 Same as the type `number` but allows integers only.
 
+### bool
+
+The bool type only allows atoms `true` and `false`. Produces
+error `not_bool(Path, Value)` when the input is one of those.
+
 ### enum
 
 The enum type has attribute `values` that contains a list of allowed values.

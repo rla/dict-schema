@@ -7,7 +7,7 @@
 /** <module> Dict validation and conversion
 
 Converts string to atoms and vice versa. Validates
-your dicts. See project README for examples.
+your dicts. See the project's README file for examples.
 */
 
 :- use_module(library(error)).
@@ -59,6 +59,9 @@ convert(Path, any, In, Out, EIn, EOut):- !,
 
 convert(Path, var, In, Out, EIn, EOut):- !,
     convert(Path, _{ type: var }, In, Out, EIn, EOut).
+
+convert(Path, bool, In, Out, EIn, EOut):- !,
+    convert(Path, _{ type: bool }, In, Out, EIn, EOut).
 
 convert(Path, Name, In, Out, EIn, EOut):-
     atom(Name), !,
@@ -115,6 +118,11 @@ convert_type(var, Path, Schema, In, In, EIn, EOut):- !,
     allowed_attributes(var, Path, Schema, []),
     (   var(In)
     ;   EOut = [not_variable(Path, In)|EIn]), !.
+
+convert_type(bool, Path, Schema, In, Out, EIn, EOut):- !,
+    check_is_dict(Path, Schema),
+    allowed_attributes(bool, Path, Schema, []),
+    convert_bool(Path, In, Out, EIn, EOut).
 
 convert_type(Type, Path, _, _, _, _, _):-
     throw(error(unknown_type(Path, Type))).
@@ -203,6 +211,17 @@ check_is_dict(Path, Schema):-
     (   is_dict(Schema)
     ->  true
     ;   throw(error(schema_not_dict(Path, Schema)))).
+
+% Checks bool true/false.
+
+convert_bool(Path, In, In, EIn, EOut):-
+    var(In), !,
+    EOut = [not_ground(Path, In)|EIn].
+
+convert_bool(Path, In, In, EIn, EOut):-
+    (   (In = true ; In = false)
+    ->  EOut = EIn
+    ;   EOut = [not_bool(Path, In)]).
 
 % Converts list.
 
