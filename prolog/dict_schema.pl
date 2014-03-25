@@ -305,7 +305,7 @@ convert_keys([Key-Schema|Pairs], Optional, Path, In, OutPairs, EIn, EOut):-
         convert_keys(Pairs, Optional, Path, In, OutPairsRest, ETmp, EOut)
     ;   (   memberchk(Key, Optional)
         ->  ETmp = EIn
-        ;   ETmp = [no_key(Path/Key)|EIn]),
+        ;   ETmp = [no_key(Path, Key)|EIn]),
         convert_keys(Pairs, Optional, Path, In, OutPairs, ETmp, EOut)).
 
 convert_keys([], _, _, _, [], Errors, Errors).
