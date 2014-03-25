@@ -23,7 +23,11 @@ Check vehicle against a schema:
         model: corvette
     },
     convert(Vehicle, Schema, Out, Errors),
-    Out = vehicle{make:chevrolet, model:corvette, year:1953},
+    Out = vehicle{
+        make: chevrolet,
+        model: corvette,
+        year: 1953
+    },
     Errors = [].
 
 You can name the schema by registering it:
@@ -45,8 +49,12 @@ And then use it by name:
         model: corvette
     },
     convert(Vehicle, vehicle, Out, Errors).
-    Out = vehicle{make:chevrolet, model:corvette, year:1200},
-    Errors = [min(# / year, 1200, 1672)].
+    Out = vehicle{
+        make: chevrolet,
+        model: corvette,
+        year: 1200
+    },
+    Errors = [min(#/year, 1200, 1672)].
 
 The last example also shows validation error for the `year` key. Another
 feature is automatic conversion from strings to atoms when the atom type
@@ -258,6 +266,48 @@ Tree with positive numbers:
             [invalid_compound(# / branch(1),a)]
         ])]
     ])].
+
+## Using with HTTP
+
+This was the main motivation and use case for this library.
+
+    :- use_module(library(http/thread_httpd)).
+    :- use_module(library(http/http_dispatch)).
+    :- use_module(library(http/http_json)).
+    :- use_module(library(dict_schema)).
+
+    % Schema for hello input.
+
+    :- register_schema(hello, _{
+        type: dict,
+        keys: _{ from: _{ type: atom, min_length: 3 } }
+    }).
+
+    :- http_handler('/hello', receive_data, []).
+
+    receive_data(Request):-
+        http_read_json_dict(Request, Dict),
+        % Convert/validate input:
+        convert(Dict, hello, Hello, Errors),
+        format('Content-type: text/plain; charset=UTF-8~n~n'),
+        (   Errors = []
+        ->  get_dict(from, Hello, From),
+            format('~w said hello~n', [From])
+        ;   format('Input errors: ~w~n', [Errors])).
+
+    :- http_server(http_dispatch, [port(8080)]).
+
+Example calls using curl:
+
+    curl -X POST -H 'Content-Type: application/json' \
+    -d '{"from": "RLa"}' http://localhost:8080/hello
+
+    RLa said hello
+
+    curl -X POST -H 'Content-Type: application/json' \
+    -d '{"to": "RLa"}' http://localhost:8080/hello
+
+    Input errors: [additional_key(#,to),no_key(#,from)]
 
 ## Metavalidation
 
