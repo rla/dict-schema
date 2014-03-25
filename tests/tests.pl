@@ -197,4 +197,10 @@ test(valid_union_1):-
 test(valid_union_2):-
     convert(a, [ number, atom ], a, []).
 
+test(valid_var):-
+    convert(_, var, _, []).
+
+test(invalid_var):-
+    convert(1, var, 1, [not_variable('#', 1)]).
+
 :- end_tests(dict_schema).

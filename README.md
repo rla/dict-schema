@@ -206,6 +206,10 @@ Examples:
 
 Type `any` marks the value non-checked and non-converted.
 
+### var
+
+Type `var` is for variables in the input.
+
 ## Named schemas
 
 Named schema can be added with `register_schema(Name, Schema)` and removed with

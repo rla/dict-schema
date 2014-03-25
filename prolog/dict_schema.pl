@@ -57,6 +57,9 @@ convert(Path, integer, In, Out, EIn, EOut):- !,
 convert(Path, any, In, Out, EIn, EOut):- !,
     convert(Path, _{ type: any }, In, Out, EIn, EOut).
 
+convert(Path, var, In, Out, EIn, EOut):- !,
+    convert(Path, _{ type: var }, In, Out, EIn, EOut).
+
 convert(Path, Name, In, Out, EIn, EOut):-
     atom(Name), !,
     (   schema(Name, Schema)
@@ -106,6 +109,12 @@ convert_type(compound, Path, Schema, In, Out, EIn, EOut):- !,
 convert_type(any, Path, Schema, In, In, EIn, EIn):- !,
     check_is_dict(Path, Schema),
     allowed_attributes(any, Path, Schema, []).
+
+convert_type(var, Path, Schema, In, In, EIn, EOut):- !,
+    check_is_dict(Path, Schema),
+    allowed_attributes(var, Path, Schema, []),
+    (   var(In)
+    ;   EOut = [not_variable(Path, In)|EIn]), !.
 
 convert_type(Type, Path, _, _, _, _, _):-
     throw(error(unknown_type(Path, Type))).
