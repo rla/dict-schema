@@ -271,7 +271,7 @@ The top-level schema is an union of branch and leaf schemas.
 ## Using with HTTP
 
 This was the main motivation and use case for this library. The following example
-register schema for JSON input document that must contain property `from`. The value
+registers a schema for JSON input documents that must contain a property `from`. The value
 of the property must be an atom with length minimally 3.
 
     :- use_module(library(http/thread_httpd)).
