@@ -12,18 +12,9 @@ Check vehicle against a schema:
     ?- Schema = _{
         type: dict,
         keys: _{
-            year: _{
-                type: integer,
-                min: 1672
-            },
-            make: _{
-                type: atom,
-                min_length: 1
-            },
-            model: _{
-                type: atom,
-                min_length: 1
-            }
+            year: _{ type: integer, min: 1672 },
+            make: _{ type: atom, min_length: 1 },
+            model: _{ type: atom, min_length: 1 }
         }
     },
     Vehicle = vehicle{
@@ -40,18 +31,9 @@ You can name the schema by registering it:
     ?- register_schema(vehicle, _{
         type: dict,
         keys: _{
-            year: _{
-                type: integer,
-                min: 1672
-            },
-            make: _{
-                type: atom,
-                min_length: 1
-            },
-            model: _{
-                type: atom,
-                min_length: 1
-            }
+            year: _{ type: integer, min: 1672 },
+            make: _{ type: atom, min_length: 1 },
+            model: _{ type: atom, min_length: 1 }
         }
     }).
 
@@ -110,7 +92,7 @@ of the list (starts from 0) and the 0-th argument of the term.
 
 All types below assume that input is either a ground or a dict with ground values.
 Exceptions are `any` and `var`. A dict with an unbound tag is allowed depending
-on its type `tag` attribute.
+on its type's `tag` attribute.
 
 ### string
 
