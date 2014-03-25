@@ -138,11 +138,15 @@ test(invalid_dict_var):-
         _, [not_ground('#', _)]).
 
 test(invalid_dict_missing_key):-
-    convert(t{ b: 1 }, _{ type: dict, tag: t, keys: _{ a: _{ type: integer } } },
+    convert(t{}, _{ type: dict, tag: t, keys: _{ a: _{ type: integer } } },
         _, [no_key(('#')/a)]).
 
-test(dict_drop_extra_key):-
+test(invalid_dict_additional_key):-
     convert(t{ a: 1, b: 2 }, _{ type: dict, tag: t, keys: _{ a: _{ type: integer } } },
+        t{ a: 1 }, [additional_key('#', b)]).
+
+test(dict_drop_additional_key):-
+    convert(t{ a: 1, b: 2 }, _{ type: dict, tag: t, additional: true, keys: _{ a: _{ type: integer } } },
         t{ a: 1 }, []).
 
 test(valid_empty_list):-

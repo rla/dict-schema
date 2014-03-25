@@ -101,14 +101,13 @@ String type has the following optional attributes:
  * min_length - specifies the minimum length of the string.
  * max_length - specifies the maximum length of the string.
 
-When the input value is an atom, it is converted into a string. All
-other input values other than strings will produce
-an error `not_string(Path, Value)`.
+Errors:
 
-When the `min_length` property is violated then an
-error `min_length(Path, Value, MinLength)` is produced.
-When the `max_length` property is violated then an
-error `max_length(Path, Value, MaxLength)` is produced.
+ * When the input value is an atom, it is converted into a string. All
+   other input values other than strings will produce
+   an error `not_string(Path, Value)`.
+ * The `min_length` property is violated: `min_length(Path, Value, MinLength)`.
+ * The `max_length` property is violated: `max_length(Path, Value, MaxLength)`.
 
 ### atom
 
@@ -124,12 +123,11 @@ Number type has the following optional attributes:
  * min - specifies the minimum value of the number.
  * max - specifies the maximum value of the number.
 
-All other values than numbers will produce an error.
+Errors:
 
-When the `min` property is violated then an error term
-`min(Path, Value, Min)` is produced.
-When the `max` property is violated then an error term
-`max(Path, Value, Max)` is produced.
+ * Value is not a number: `not_number(Path, Value)`.
+ * The `min` property is violated: `min(Path, Value, Min)`.
+ * The `max` property is violated: `max(Path, Value, Max)`.
 
 ### integer
 
@@ -138,14 +136,14 @@ Same as the type `number` but allows integers only.
 ### bool
 
 The bool type only allows atoms `true` and `false`. Produces
-error `not_bool(Path, Value)` when the input is one of those.
+error `not_bool(Path, Value)` when the input is not one of those.
 
 ### enum
 
 The enum type has attribute `values` that contains a list of allowed values.
 The list must contain atoms. If the checked value is not in the list
 then an error is produced. If the input value is a string then it is converted
-into an atom first. All other values produce an error.
+into an atom first. All other values produce an error `not_enum(Path, Value)`.
 
 ### dict
 
@@ -156,16 +154,34 @@ The dict type has the following attributes:
    is missing then no tag checking is performed.
  * keys - specifies dict keys and schemas for values.
  * optional - list of keys that are optional.
+ * additional - specifies whether extra keys are allowed or not. Default
+   value is `false`.
 
-Input keys that are not in the `keys` will be dropped from the output.
+Errors:
+
+ * Value not a dict: `not_dict(Path, Value)`.
+ * When the `additional` property is missing or its value is `false` and
+   every key is not listed in `keys`: `additional_key(Path, Key)`.
+ * When a key in the input is missing: `no_key(Path, Key)`.
+ * When the `tag` property is specified and the input's tag does not
+   match it: `invalid_tag(Path, Tag, RequiredTag)`.
+
+When the `tag` property is specified and the input has no tag then input's tag is
+unified with the `tag` property value.
 
 ### list
 
 The list type has the following attributes:
 
  * items - specifies the type of the list items.
- * min_length - specifies the minimum number of items.
- * max_length - specifies the maximum number of items.
+ * min_length - specifies the minimum number of items (optional).
+ * max_length - specifies the maximum number of items (optional).
+
+Errors:
+
+ * When the input is not a list: `not_list(Path, Value)`.
+ * When the `min_length` property is violated: `min_length(Path, Value, MinLength)`.
+ * When the `max_length` property is violated: `max_length(Path, Value, MaxLength)`.
 
 ### compound
 
@@ -173,6 +189,12 @@ The compound type has the following attributes:
 
  * name - the compound name.
  * arguments - the compound arguments.
+
+Errors:
+
+ * When the input is not a compound: `invalid_compound(Path, In)`.
+ * When number of arguments does not match: `compound_args_length(Path, ActualLen, RequiredLen)`.
+ * When the name does not match: `compound_name(Path, ActualName, Name)`.
 
 ### unions
 

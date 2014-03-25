@@ -144,7 +144,7 @@ convert_union([], Path, In, In, EReasons, EIn, EOut):-
 
 validate_dict_schema(Path, Schema):-
     check_is_dict(Path, Schema),
-    allowed_attributes(dict, Path, Schema, [tag, keys, optional]),
+    allowed_attributes(dict, Path, Schema, [tag, keys, optional, additional]),
     (   get_dict(keys, Schema, _)
     ->  true
     ;   throw(error(dict_no_keys(Path, Schema)))).
@@ -287,14 +287,16 @@ convert_dict(Tag, Path, Schema, In, Out, EIn, EOut):-
     ->  (   Tag = SchemaTag
         ->  get_dict_ex(keys, Schema, Keys),
             dict_pairs(Keys, _, Pairs),
-            convert_keys(Pairs, Optional, Path, In, OutPairs, EIn, EOut),
-            dict_pairs(Out, Tag, OutPairs)
+            convert_keys(Pairs, Optional, Path, In, OutPairs, EIn, ETmp),
+            dict_pairs(Out, Tag, OutPairs),
+            validate_additional(Path, In, Schema, ETmp, EOut)
         ;   Out = In,
             EOut = [invalid_tag(Path, Tag, SchemaTag)|EIn])
     ;   get_dict_ex(keys, Schema, Keys),
         dict_pairs(Keys, _, Pairs),
-        convert_keys(Pairs, Optional, Path, In, OutPairs, EIn, EOut),
-        dict_pairs(Out, Tag, OutPairs)).
+        convert_keys(Pairs, Optional, Path, In, OutPairs, EIn, ETmp),
+        dict_pairs(Out, Tag, OutPairs),
+        validate_additional(Path, In, Schema, ETmp, EOut)).
 
 convert_keys([Key-Schema|Pairs], Optional, Path, In, OutPairs, EIn, EOut):-
     (   get_dict(Key, In, Value)
@@ -307,6 +309,25 @@ convert_keys([Key-Schema|Pairs], Optional, Path, In, OutPairs, EIn, EOut):-
         convert_keys(Pairs, Optional, Path, In, OutPairs, ETmp, EOut)).
 
 convert_keys([], _, _, _, [], Errors, Errors).
+
+% Checks that no additional keys are
+% present in dict with additional: false.
+
+validate_additional(_, _, Schema, EIn, EIn):-
+    get_dict(additional, Schema, true), !.
+
+validate_additional(Path, In, Schema, EIn, EOut):-
+    dict_pairs(In, _, Pairs),
+    get_dict(keys, Schema, Keys),
+    validate_additional_keys(Pairs, Path, Keys, EIn, EOut).
+
+validate_additional_keys([Key-_|Pairs], Path, Keys, EIn, EOut):-
+    (   get_dict(Key, Keys, _)
+    ->  validate_additional_keys(Pairs, Path, Keys, EIn, EOut)
+    ;   ETmp = [additional_key(Path, Key)|EIn],
+        validate_additional_keys(Pairs, Path, Keys, ETmp, EOut)).
+
+validate_additional_keys([], _, _, EIn, EIn).
 
 % Converts string.
 
@@ -485,7 +506,7 @@ convert_compound(Path, Schema, In, Out, EIn, EOut):-
             Out =.. [Name|ConvertedArgs],
             convert_compound_args(ActualArgs, ArgSchemas, Name, 0, Path, ConvertedArgs, EIn, EOut)
         ;   EOut = [compound_args_length(Path, ActualLen, ArgSchemasLen)|EIn])
-    ;   EOut = [compound_name(Path, Name, ActualName)|EIn]).
+    ;   EOut = [compound_name(Path, ActualName, Name)|EIn]).
 
 convert_compound(Path, _, In, In, EIn, EOut):-
     EOut = [invalid_compound(Path, In)|EIn].
