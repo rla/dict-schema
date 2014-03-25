@@ -206,6 +206,10 @@ check_is_dict(Path, Schema):-
 
 % Converts list.
 
+convert_list(Path, _, In, In, EIn, EOut):-
+    var(In), !,
+    EOut = [not_ground(Path, In)|EIn].
+
 convert_list(Path, Schema, In, Out, EIn, EOut):-
     is_list(In), !,
     get_dict_ex(items, Schema, ItemSchema),
@@ -246,6 +250,10 @@ validate_list_max_length(Path, Schema, List, EIn, EOut):-
 
 % Converts dict.
 
+convert_dict(Path, _, In, In, EIn, EOut):-
+    var(In), !,
+    EOut = [not_ground(Path, In)|EIn].
+
 convert_dict(Path, Schema, In, Out, EIn, EOut):-
     is_dict(In, Tag), !,
     convert_dict(Tag, Path, Schema, In, Out, EIn, EOut).
@@ -283,6 +291,10 @@ convert_keys([], _, _, _, [], Errors, Errors).
 
 % Converts string.
 
+convert_string(Path, _, In, In, EIn, EOut):-
+    var(In), !,
+    EOut = [not_ground(Path, In)|EIn].
+
 convert_string(Path, Schema, In, In, EIn, EOut):-
     string(In), !,
     validate_string(Path, Schema, In, EIn, EOut).
@@ -318,6 +330,10 @@ validate_string_max_length(Path, Schema, String, EIn, EOut):-
     ;   EOut = EIn).
 
 % Converts atom.
+
+convert_atom(Path, _, In, In, EIn, EOut):-
+    var(In), !,
+    EOut = [not_ground(Path, In)|EIn].
 
 convert_atom(Path, Schema, In, In, EIn, EOut):-
     atom(In), !,
@@ -355,6 +371,10 @@ validate_atom_max_length(Path, Schema, Atom, EIn, EOut):-
 
 % Checks integer.
 
+convert_integer(Path, _, In, In, EIn, EOut):-
+    var(In), !,
+    EOut = [not_ground(Path, In)|EIn].
+
 convert_integer(Path, Schema, In, In, EIn, EOut):-
     integer(In), !,
     validate_integer(Path, Schema, In, EIn, EOut).
@@ -384,6 +404,10 @@ validate_number_max(Path, Schema, Num, EIn, EOut):-
 
 % Checks number.
 
+convert_number(Path, _, In, In, EIn, EOut):-
+    var(In), !,
+    EOut = [not_ground(Path, In)|EIn].
+
 convert_number(Path, Schema, In, In, EIn, EOut):-
     number(In), !,
     validate_number(Path, Schema, In, EIn, EOut).
@@ -398,6 +422,10 @@ validate_number(Path, Schema, Num, EIn, EOut):-
     validate_number_max(Path, Schema, Num, ETmp, EOut).
 
 % Converts/checks enum.
+
+convert_enum(Path, _, In, In, EIn, EOut):-
+    var(In), !,
+    EOut = [not_ground(Path, In)|EIn].
 
 convert_enum(Path, Schema, In, In, EIn, EOut):-
     atom(In), !,
@@ -420,6 +448,10 @@ check_enum(Path, _, In, EIn, EOut):-
     EOut = [invalid_enum_value(Path, In)|EIn].
 
 % Converts/checks compound.
+
+convert_compound(Path, _, In, In, EIn, EOut):-
+    var(In), !,
+    EOut = [not_ground(Path, In)|EIn].
 
 convert_compound(Path, Schema, In, Out, EIn, EOut):-
     compound(In), !,

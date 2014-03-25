@@ -108,6 +108,10 @@ of the list (starts from 0) and the 0-th argument of the term.
 
 ## Available types
 
+All types below assume that input is either a ground or a dict with ground values.
+Exceptions are `any` and `var`. A dict with an unbound tag is allowed depending
+on its type `tag` attribute.
+
 ### string
 
 String type has the following optional attributes:
@@ -127,7 +131,7 @@ error `max_length(Path, Value, MaxLength)` is produced.
 ### atom
 
 Works similar to the `string` type. When the input is a string,
-it is converted to an atom. Has same optional attributes.
+it is converted into an atom. Has same optional attributes.
 When input is not a string or atom, an error
 term `not_atom(Path, Value)` is produced.
 
@@ -208,7 +212,8 @@ Type `any` marks the value non-checked and non-converted.
 
 ### var
 
-Type `var` is for variables in the input.
+Type `var` is for variables in the input. When the input is not
+a variable then an error term `not_variable(Path, Value)` is produced.
 
 ## Named schemas
 

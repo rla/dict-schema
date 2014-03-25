@@ -11,6 +11,9 @@ test(valid_string_atom):-
 test(invalid_string):-
     convert(1, _{ type: string }, 1, [not_string('#', 1)]).
 
+test(invalid_string_var):-
+    convert(_, _{ type: string }, _, [not_ground('#', _)]).
+
 test(valid_max_length_string):-
     convert("abc", _{ type: string, max_length: 3 }, "abc", []).
 
@@ -31,6 +34,9 @@ test(valid_atom_string):-
 
 test(invalid_atom):-
     convert(1, _{ type: atom }, 1, [not_atom('#', 1)]).
+
+test(invalid_atom_var):-
+    convert(_, _{ type: atom }, _, [not_ground('#', _)]).
 
 test(valid_max_length_atom):-
     convert(abc, _{ type: atom, max_length: 3 }, abc, []).
@@ -53,6 +59,9 @@ test(valid_number_float):-
 test(invalid_number):-
     convert(abc, _{ type: number }, abc, [not_number('#', abc)]).
 
+test(invalid_number_var):-
+    convert(_, _{ type: number }, _, [not_ground('#', _)]).
+
 test(valid_number_min):-
     convert(123, _{ type: number, min: 123 }, 123, []).
 
@@ -73,6 +82,9 @@ test(invalid_integer_float):-
 
 test(invalid_integer):-
     convert(abc, _{ type: integer }, abc, [not_integer('#', abc)]).
+
+test(invalid_integer_var):-
+    convert(_, _{ type: integer }, _, [not_ground('#', _)]).
 
 test(valid_integer_min):-
     convert(123, _{ type: integer, min: 123 }, 123, []).
@@ -98,6 +110,9 @@ test(invalid_enum):-
 test(invalid_enum):-
     convert(1, _{ type: enum, values: [ foo, bar ] }, 1, [invalid_enum_value('#', 1)]).
 
+test(invalid_enum_var):-
+    convert(_, _{ type: enum, values: [ foo, bar ] }, _, [not_ground('#', _)]).
+
 test(valid_dict_1):-
     convert(t{ a: 1 }, _{ type: dict, keys: _{ a: _{ type: integer } } },
         t{ a: 1 }, []).
@@ -118,6 +133,10 @@ test(invalid_dict_tag):-
     convert(t1{ a: 1 }, _{ type: dict, tag: t2, keys: _{ a: _{ type: integer } } },
         t1{ a: 1 }, [invalid_tag('#', t1, t2)]).
 
+test(invalid_dict_var):-
+    convert(_, _{ type: dict, keys: _{ a: _{ type: integer } } },
+        _, [not_ground('#', _)]).
+
 test(invalid_dict_missing_key):-
     convert(t{ b: 1 }, _{ type: dict, tag: t, keys: _{ a: _{ type: integer } } },
         _, [no_key(('#')/a)]).
@@ -125,8 +144,6 @@ test(invalid_dict_missing_key):-
 test(dict_drop_extra_key):-
     convert(t{ a: 1, b: 2 }, _{ type: dict, tag: t, keys: _{ a: _{ type: integer } } },
         t{ a: 1 }, []).
-
-% FIXME test optional keys.
 
 test(valid_empty_list):-
     convert([], _{ type: list, items: _{ type: number } }, [], []).
@@ -140,6 +157,10 @@ test(valid_list_2):-
 test(invalid_list_item):-
     convert([1, a], _{ type: list, items: _{ type: number } },
         [1, a], [not_number(('#')/[1],a)]).
+
+test(invalid_list_var):-
+    convert(_, _{ type: list, items: _{ type: number } },
+        _, [not_ground('#', _)]).
 
 test(valid_list_length):-
     convert([1], _{ type: list, items: _{ type: number },
@@ -160,6 +181,10 @@ test(valid_compound):-
 test(invalid_compound):-
     convert(1, _{ type: compound, name: f, arguments: [ _{ type: number } ] },
         1, [invalid_compound('#', 1)]).
+
+test(invalid_compound_var):-
+    convert(_, _{ type: compound, name: f, arguments: [ _{ type: number } ] },
+        _, [not_ground('#', _)]).
 
 test(invalid_compound_arg):-
     convert(f(a), _{ type: compound, name: f, arguments: [ _{ type: number } ] },
