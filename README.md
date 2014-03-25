@@ -239,7 +239,8 @@ Named schema can be added with `register_schema(Name, Schema)` and removed with
 
 ## Validating trees
 
-Tree with positive numbers:
+The following example validates binary tree that has integers in leafs.
+The top-level schema is an union of branch and leaf schemas.
 
     ?- register_schema(tree, [
         _{
@@ -269,7 +270,9 @@ Tree with positive numbers:
 
 ## Using with HTTP
 
-This was the main motivation and use case for this library.
+This was the main motivation and use case for this library. The following example
+register schema for JSON input document that must contain property `from`. The value
+of the property must be an atom with length minimally 3.
 
     :- use_module(library(http/thread_httpd)).
     :- use_module(library(http/http_dispatch)).
@@ -319,3 +322,29 @@ and are not placed into the `Errors` output list.
 
 Generated API documentation can be found from here:
 <http://packs.rlaanemets.com/dict-schema/doc>.
+
+## Installation
+
+This package requires Swi-Prolog 7.x.
+
+    pack_install(dict_schema).
+
+## Running tests
+
+In the package root, insert into swipl:
+
+    [tests/tests].
+    run_tests.
+
+Or if you cloned the repo:
+
+    make test
+
+## Bug reports/feature requests
+
+Please send bug reports/feature request through the GitHub
+project [page](https://github.com/rla/dict-schema).
+
+## License
+
+The MIT License. See the LICENSE file.
