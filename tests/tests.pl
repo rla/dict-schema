@@ -139,7 +139,7 @@ test(invalid_dict_var):-
 
 test(invalid_dict_missing_key):-
     convert(t{}, _{ type: dict, tag: t, keys: _{ a: _{ type: integer } } },
-        _, [no_key(('#')/a)]).
+        _, [no_key('#', a)]).
 
 test(invalid_dict_additional_key):-
     convert(t{ a: 1, b: 2 }, _{ type: dict, tag: t, keys: _{ a: _{ type: integer } } },
@@ -196,7 +196,7 @@ test(invalid_compound_arg):-
 
 test(invalid_compound_name):-
     convert(g(1), _{ type: compound, name: f, arguments: [ _{ type: number } ] },
-        g(1), [compound_name('#',f,g)]).
+        g(1), [compound_name('#', g, f)]).
 
 test(any):-
     convert(a, _{ type: any }, a, []).
