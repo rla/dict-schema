@@ -74,7 +74,7 @@ convert(Path, Union, In, Out, EIn, EOut):-
     convert_union(Union, Path, In, Out, [], EIn, EOut).
 
 convert(Path, Schema, In, Out, EIn, EOut):-
-    get_dict_ex(type, Schema, Type),
+    Type = Schema.type,
     convert_type(Type, Path, Schema, In, Out, EIn, EOut).
 
 convert_type(dict, Path, Schema, In, Out, EIn, EOut):- !,
@@ -231,7 +231,7 @@ convert_list(Path, _, In, In, EIn, EOut):-
 
 convert_list(Path, Schema, In, Out, EIn, EOut):-
     is_list(In), !,
-    get_dict_ex(items, Schema, ItemSchema),
+    ItemSchema = Schema.items,
     convert_list(In, Path, 0, ItemSchema, Out, EIn, ETmp),
     validate_list(Path, Schema, Out, ETmp, EOut).
 
@@ -285,14 +285,14 @@ convert_dict(Tag, Path, Schema, In, Out, EIn, EOut):-
     ;   Optional = []), !,
     (   get_dict(tag, Schema, SchemaTag)
     ->  (   Tag = SchemaTag
-        ->  get_dict_ex(keys, Schema, Keys),
+        ->  Keys = Schema.keys,
             dict_pairs(Keys, _, Pairs),
             convert_keys(Pairs, Optional, Path, In, OutPairs, EIn, ETmp),
             dict_pairs(Out, Tag, OutPairs),
             validate_additional(Path, In, Schema, ETmp, EOut)
         ;   Out = In,
             EOut = [invalid_tag(Path, Tag, SchemaTag)|EIn])
-    ;   get_dict_ex(keys, Schema, Keys),
+    ;   Keys = Schema.keys,
         dict_pairs(Keys, _, Pairs),
         convert_keys(Pairs, Optional, Path, In, OutPairs, EIn, ETmp),
         dict_pairs(Out, Tag, OutPairs),
@@ -469,13 +469,13 @@ convert_enum(Path, _, In, In, EIn, EOut):-
 
 convert_enum(Path, Schema, In, In, EIn, EOut):-
     atom(In), !,
-    get_dict_ex(values, Schema, Values),
+    Values = Schema.values,
     check_enum(Path, Values, In, EIn, EOut).
 
 convert_enum(Path, Schema, In, Out, EIn, EOut):-
     string(In), !,
     atom_string(Out, In),
-    get_dict_ex(values, Schema, Values),
+    Values = Schema.values,
     check_enum(Path, Values, Out, EIn, EOut).
 
 convert_enum(Path, _, In, In, EIn, EOut):-
@@ -495,8 +495,8 @@ convert_compound(Path, _, In, In, EIn, EOut):-
 
 convert_compound(Path, Schema, In, Out, EIn, EOut):-
     compound(In), !,
-    get_dict_ex(name, Schema, Name),
-    get_dict_ex(arguments, Schema, ArgSchemas),
+    Name = Schema.name,
+    ArgSchemas = Schema.arguments,
     In =.. [ActualName|ActualArgs],
     (   Name = ActualName
     ->  length(ArgSchemas, ArgSchemasLen),
