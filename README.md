@@ -318,6 +318,10 @@ The schema is validated on-the-fly during the validation of the input term.
 It is checked for valid attributes. Schema errors are thrown as exceptions
 and are not placed into the `Errors` output list.
 
+## Changelog
+
+ * 2014-04-22 - replace get_dict_ex/3 with dot operator.
+
 ## API documentation
 
 Generated API documentation can be found from here:
