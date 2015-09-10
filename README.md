@@ -5,6 +5,8 @@ to convert certain dict (from HTTP JSON requests) entries into suitable forms
 (especially the string/atom conversion). A large part of this library was inspired
 by JSON-Schema.
 
+[![Build Status](https://travis-ci.org/rla/dict-schema.svg)](https://travis-ci.org/rla/dict-schema)
+
 ## Example
 
 Check vehicle against a schema:
